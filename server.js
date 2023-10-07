@@ -7,7 +7,7 @@ const server = http.createServer(app);
 const logger = require('morgan')
 const cors = require('cors')
 const multer = require('multer')
-const admin = require('firebase-admin')
+
 const serviceAccount = require('./serviceAccountKey.json');
 const passport = require('passport');
 const users = require('./routes/usersRoutes');
@@ -15,14 +15,13 @@ const keys = require('./config/keys');
 const categoriesRoutes = require('./routes/categoriesRoutes');
 const products = require('./routes/productsRoutes');
 const address = require('./routes/addressRoutes');
+const AddressFirebase = require('./routes/addressFirebaseRoutes');
 const orders = require('./routes/ordersRoutes');
 const io = require('socket.io')(server);
 
 const orderDeliverySocket = require('./sockets/orders_delivery_socket');
 
-admin.initializeApp({
-    credential:admin.credential.cert(serviceAccount)
-})
+
 
 const upload = multer({
     storage:multer.memoryStorage()
@@ -73,8 +72,9 @@ categoriesRoutes(app);
 products(app,upload)
 address(app)
 orders(app)
+AddressFirebase(app)
 
-server.listen(3000,'192.168.0.14'||'localhost',function(){
+server.listen(3000,'192.168.0.4'||'localhost',function(){
     console.log('Aplicacion de nodejs '+port+' Iniciada...')
 });
 

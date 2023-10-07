@@ -1,10 +1,10 @@
-
-
 const db = require('../config/config.js')
 
 const Rol = {};
 
 Rol.create = (id_user,id_rol) =>{
+
+    console.log(id_user);
     const sql = `
         INSERT INTO
             user_has_roles(

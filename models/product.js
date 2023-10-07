@@ -13,7 +13,9 @@ Product.findByCategory= (id_category) =>{
             P.image1,
             P.image2,
             P.image3,
-            P.id_category
+            P.id_category,
+            P.id_user
+          
         FROM
             products AS P
         INNER JOIN
@@ -24,6 +26,7 @@ Product.findByCategory= (id_category) =>{
             C.id = $1
 
     `;
+    console.log(id_category)
     return db.manyOrNone(sql,id_category);
 }
 
@@ -62,10 +65,11 @@ Product.create = (producto) => {
         image2,
         image3,
         id_category,
+        id_user,
         created_at,
         updated_at
     )
-    VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id
+    VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id
     `;
     return db.oneOrNone(sql,[
         producto.name,
@@ -75,6 +79,7 @@ Product.create = (producto) => {
         producto.image2,
         producto.image3,
         producto.id_category,
+        producto.id_user,
         new Date(),
         new Date()
     ]);
@@ -92,7 +97,8 @@ Product.update = (producto) => {
             image2 = $6 ,
             image3 = $7 ,
             id_category = $8,
-            updated_at = $9
+            id_user = $9,
+            updated_at = $10
         WHERE 
         id = $1
 
@@ -106,6 +112,7 @@ Product.update = (producto) => {
         producto.image2  ,
         producto.image3  ,
         producto.id_category ,
+        producto.id_user ,
         new Date()
     ]);
 }

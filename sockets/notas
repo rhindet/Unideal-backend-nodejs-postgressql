@@ -1,0 +1,7 @@
+ // Emite la ubicación solo a la sala correspondiente al conductor
+                    const driverRoom = driverRooms.get(data.id_driver);
+                    if (driverRoom) {
+                        socket.to(driverRoom).emit('position', { lat: data.lat, lng: data.lng });
+                        console.log(`${driverRoom}`);
+                         console.log(`id_driver:${data.id_driver} lat: ${data.lat}, lng: ${data.lng} `)
+                    }

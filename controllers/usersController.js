@@ -6,6 +6,8 @@ const User = require('../models/user')
 const Rol = require('../models/rol');
 const storage  = require('../utils/cloud_storage');
 
+
+
 module.exports = {
     async getAll(req,res,next){
         try{
@@ -90,6 +92,7 @@ module.exports = {
              const user = JSON.parse(req.body.user);
            
              console.log(`Datos enviados del usuario: ${user}`)
+            
 
              const files =  req.files;
              if(files.length > 0){
@@ -101,9 +104,9 @@ module.exports = {
              }
 
              const data = await User.create(user);
-
+            
              await Rol.create(data.id,1); //ROL POR DEFECTO (CLIENTE)
-
+             
              return res.status(201).json({
                 success:true,
                 message:'El registro se realizo correctamente , ahora inicia sesion',

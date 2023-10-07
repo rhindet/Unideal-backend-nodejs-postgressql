@@ -210,4 +210,3 @@ User.findDeliveryMen = () => {
 
 module.exports = User;
 
-

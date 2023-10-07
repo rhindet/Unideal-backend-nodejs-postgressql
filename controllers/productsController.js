@@ -47,6 +47,8 @@ module.exports = {
         let product = JSON.parse(req.body.product);
         const files = req.files;
 
+         console.log(req.body.product)
+
         let inserts = 0;
 
         if(files.length === 0){
@@ -81,10 +83,8 @@ module.exports = {
                         inserts = inserts + 1;
 
                         if(inserts == files.length){
-                            return res.status(201).json({
-                                success:true,
-                                message:'El producto se ha registrado correctamente'
-                            });
+                         
+                            return res.status(201).json({"success":true,"message":"El producto se ha registrado correctamente"});
                         }
                     });
                 }

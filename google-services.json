@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "969263657484",
+    "project_id": "delivery-app-unideal",
+    "storage_bucket": "delivery-app-unideal.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:969263657484:android:484c90d7dccd086b3af429",
+        "android_client_info": {
+          "package_name": "com.arrap.unideal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXl0BdZMoMqbEu3M9b8Zj4O54LK5lsmqw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

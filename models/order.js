@@ -319,4 +319,14 @@ Order.updateLatLng = (order) => {
 }
 
 
+Order.delete = (order) => {
+    const sql = `
+        DELETE FROM  orders WHERE id = $1
+    `;
+    return db.none(sql,[
+        order,
+    ]);
+}
+
+
 module.exports = Order;
