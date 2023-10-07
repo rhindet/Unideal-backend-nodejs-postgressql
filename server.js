@@ -38,7 +38,7 @@ app.use(express.urlencoded({
     extended:true
 }));
 app.use(cors());
-app.use(require('express-session')({ 
+app.use(require('cookie-session')({ 
     secret: keys.secretOrKey,
     resave: true,
     saveUninitialized: true
@@ -74,7 +74,7 @@ address(app)
 orders(app)
 AddressFirebase(app)
 
-server.listen(3000,'192.168.0.4'||'localhost',function(){
+server.listen(3000,'0.0.0.0'||'localhost',function(){
     console.log('Aplicacion de nodejs '+port+' Iniciada...')
 });
 
