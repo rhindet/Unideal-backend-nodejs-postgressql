@@ -11,6 +11,7 @@ const multer = require('multer')
 const serviceAccount = require('./serviceAccountKey.json');
 const passport = require('passport');
 const users = require('./routes/usersRoutes');
+const restaurants = require('./routes/restaurantsRoutes');
 const keys = require('./config/keys');
 const categoriesRoutes = require('./routes/categoriesRoutes');
 const products = require('./routes/productsRoutes');
@@ -19,7 +20,7 @@ const AddressFirebase = require('./routes/addressFirebaseRoutes');
 const orders = require('./routes/ordersRoutes');
 const io = require('socket.io')(server);
 
-const orderDeliverySocket = require('./sockets/orders_delivery_socket');
+const orderDeliverySocket = require('./sockets/orders_delivery_socket_copy');
 
 
 
@@ -73,6 +74,7 @@ products(app,upload)
 address(app)
 orders(app)
 AddressFirebase(app)
+restaurants(app,upload)
 
 server.listen(3000,'0.0.0.0'||'localhost',function(){
     console.log('Aplicacion de nodejs '+port+' Iniciada...')

@@ -3,6 +3,8 @@ const db = require('../config/config');
 
 const Product = {};
 
+
+
 Product.findByCategory= (id_category) =>{
     const sql = `
         SELECT
@@ -30,8 +32,68 @@ Product.findByCategory= (id_category) =>{
     return db.manyOrNone(sql,id_category);
 }
 
+Product.delete= (id_product) =>{
+    const sql = `
+        delete  from products  WHERE id = $1
+    `;
+    return db.none(sql,id_product);
+}
 
-Product.findByCategoryAndProductName= (id_category,product_name) =>{
+
+Product.IncrementInventory = (numero, order) => {
+ 
+    var nuevoInventario = order.quantity + numero
+    const sql = ` 
+            UPDATE 
+                products
+            SET 
+                inventory = $2,
+                updated_at = $3
+            WHERE 
+                id = $1
+`;
+
+    return db.none(sql,[
+        order.id, 
+        nuevoInventario,   
+        new Date()
+    ]);
+
+
+}
+
+Product.inventoryReduce = (inv,product_id,product_quantity) => {
+      
+        
+        console.log(product_id)
+        console.log(product_quantity)
+
+        let nuevoInventario = inv - product_quantity
+
+        // Verificar si el inventario es menor que 0
+        if (nuevoInventario < 0) {
+            throw new Error('No hay suficiente inventario para este producto');
+        }
+
+        
+        const sql = ` 
+                UPDATE 
+                    products
+                SET 
+                    inventory = $2,
+                    updated_at = $3
+                WHERE 
+                    id = $1
+        `;
+        return db.none(sql,[
+            product_id, 
+            nuevoInventario,   
+            new Date()
+        ]);
+}
+
+
+Product.findByCategoryAndProductName = (id_category,product_name) =>{
     const sql = `
         SELECT
             P.id,
@@ -56,30 +118,37 @@ Product.findByCategoryAndProductName= (id_category,product_name) =>{
 }
 
 
+
+
 Product.create = (producto) => {
     const sql = `INSERT INTO products(
         name,
         description,
         price,
+        inventory,
         image1,
         image2,
         image3,
         id_category,
         id_user,
+        id_restaurant,
         created_at,
         updated_at
+        
     )
-    VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id
+    VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING id
     `;
     return db.oneOrNone(sql,[
         producto.name,
         producto.description,
         producto.price,
+        producto.inventory,
         producto.image1,
         producto.image2,
         producto.image3,
         producto.id_category,
         producto.id_user,
+        producto.id_restaurant,
         new Date(),
         new Date()
     ]);
@@ -115,6 +184,73 @@ Product.update = (producto) => {
         producto.id_user ,
         new Date()
     ]);
+}
+
+Product.getInventory = (product_id) => {
+    
+    const sql = `
+        SELECT inventory
+        FROM products 
+        WHERE id = $1
+        `;
+        return db.oneOrNone(sql, product_id
+        );
+
+}
+
+Product.updateImages = (product) => {
+    
+    const sql = `
+        UPDATE products
+        SET 
+            image1 = COALESCE($2, image1), 
+            image2 =  COALESCE($3, image2),
+            image3 =  COALESCE($4, image3)         
+        WHERE id = $1
+    `;
+    
+    return db.none(sql, [
+        product.id,
+        product.image1,
+        product.image2    ,
+        product.image3    ,
+    ]);
+};
+
+
+Product.update2 = (producto) => {
+       
+
+    const sql = `
+        UPDATE 
+            products
+        SET 
+            name = $2,
+            description = $3,
+            price = $4,
+            inventory = $5,
+            is_available = $6 ,
+            id_category = $7,
+            updated_at=$8
+        
+        WHERE 
+        id = $1
+
+    `;
+    return db.none(sql,[
+        producto.id, 
+        producto.name,
+        producto.description,
+        producto.price,
+        producto.inventory,
+        producto.is_available,
+        producto.id_category,
+        new Date()
+    ]);
+
+
+   
+
 }
 
 

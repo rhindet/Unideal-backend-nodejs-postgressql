@@ -13,6 +13,8 @@ module.exports = (app) =>{
 
     app.get('/api/orders/findByDeliveryAndStatus/:id_delivery/:status',passport.authenticate('jwt',{session:false}),OrderController.findByDeliveryAndStatus);
 
+    app.get('/api/orders/getByStatusAndRestaurant/:id_restaurant/:status',passport.authenticate('jwt',{session:false}),OrderController.getByStatusAndRestaurant);
+
     app.get('/api/orders/findByClientAndStatus/:id_client/:status',passport.authenticate('jwt',{session:false}),OrderController.findByClientAndStatus);
     
     

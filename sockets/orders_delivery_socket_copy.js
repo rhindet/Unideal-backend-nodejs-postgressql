@@ -49,10 +49,17 @@ module.exports = (io) => {
                 });
 
                 socket.on('updateStatus', (data) => {
-                    orderDeliveryNameSpace.emit('getState', data.status);
-                    console.log("entro al update")
-                     
-                }); 
+                    orderDeliveryNameSpace.emit('updateStatus', { status: data.status });
+                    console.log('entro al updatestatus') 
+                  });
+
+                   // Manejar eventos personalizados aquí
+                socket.on('rate', (data) => {
+                    console.log(`EMITIO a rate${JSON.stringify(data)}`);
+                    orderDeliveryNameSpace.emit(`rate/${data.userId}`,{
+                        restaurant:data.restaurant});
+                   
+                });
 
         
                 socket.on('disconnect', () => {

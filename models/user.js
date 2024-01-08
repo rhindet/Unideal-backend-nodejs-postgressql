@@ -9,6 +9,22 @@ User.getAll = () =>{
     return db.manyOrNone(sql);
 }
 
+User.sendForm = (userId,formulario) => {
+    const sql = `
+    INSERT INTO forms(
+        user_id,asunto,descripcion,created_at
+        )
+        VALUES($1,$2,$3,$4)
+      
+    `;
+    return db.none(sql,[
+        userId,
+        formulario.asunto,
+        formulario.descripcion,
+        new Date(),
+    ]);
+}
+
 
 User.findById = (id,callback) => {
     const sql = `SELECT
@@ -136,18 +152,20 @@ User.update = (user) =>{
             lastname = $3,
             phone = $4,
             image = $5,
-            updated_at = $6
+            updated_at = $6,
+            email = $7
         WHERE 
             id = $1 
     `;
-    console.log(user.id,user.name,user.lastname,user.phone,user.image,user.update_at)
+    console.log(user.id,user.name,user.lastname,user.phone,user.image,user.update_at,user.email)
     return db.none(sql,[
         user.id,
         user.name,
         user.lastname,
         user.phone,
         user.image,
-        new Date()
+        new Date(),
+        user.email
     ]);
    
 }

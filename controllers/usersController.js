@@ -26,6 +26,31 @@ module.exports = {
         }
 
     },
+    async sendForm(req,res,next){
+        try{
+            const userId = req.params.id_user
+            const formulario = req.body;
+            
+            await User.sendForm(userId,formulario) 
+
+            return res.status(201).json(
+                {
+                    success:true,
+                    message:'Se envio correctamente'
+                }
+            );
+        }
+        catch(error){
+            console.log(`Error: ${error}`);
+            return res.status(501).json(
+                {
+                    success:false,
+                    message:'Error al enviar el formulario'
+                }
+            );
+        }
+
+    },
     async findById(req,res,next){
         try{
             const id = req.params.id

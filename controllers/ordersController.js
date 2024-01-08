@@ -2,7 +2,8 @@
 
 
 const Order = require('../models/order');
-const OrderHasProducts = require('../models/order_has_products')
+const OrderHasProducts = require('../models/order_has_products');
+const Product = require('../models/product');
 
 module.exports={
 
@@ -10,14 +11,28 @@ module.exports={
         try{
 
             let order = req.body;
+            
+            
+            for(const product of order.products){
+                var inventario = await Product.getInventory(product.id) 
+                var inv = parseInt(inventario.inventory)
+           
+                if(inv < product.quantity){
+                    throw new Error("Inventario insuficiente"); 
+                }
+
+            }
+
             order.status = 'EN ESPERA';
             const data = await Order.create(order);
 
 
             //Recorrer todos los productos agregados a la order
             for(const product of order.products){
+                var inventario = await Product.getInventory(product.id) 
+                var inv = parseInt(inventario.inventory)
                 await OrderHasProducts.create(data.id,product.id,product.quantity);
-            
+                await Product.inventoryReduce(inv,product.id,product.quantity);    
             }
 
 
@@ -33,8 +48,8 @@ module.exports={
               console.log(`El error ${error}`);
               return res.status(501).json({
                     success:false,
-                    message:'Hubo un error creando la orden',
-                    error:error
+                    message:'Hubo un error creando la orden'
+                    
               })      
         }
     },
@@ -58,6 +73,7 @@ module.exports={
     async findByDeliveryAndStatus(req,res,next){
         try {
             const id_delivery = req.params.id_delivery
+            
             const status = req.params.status
             const data = await Order.findByDeliveryAndStatus(id_delivery,status);
         
@@ -73,12 +89,31 @@ module.exports={
             })
         }
     },
+
+    async getByStatusAndRestaurant(req,res,next){
+        try {
+            const id = req.params.id_restaurant
+            const status = req.params.status
+            const data = await Order.getByStatusAndRestaurant(id,status);
+        
+            return res.status(201).json(data); 
+
+
+        } catch (error) {
+            console.log(`Error ${error}`)
+            return res.status(501).json({
+                message:'Hubo un error al tratar de obtener las ordenes por status',
+                error:error,
+                success:false
+            })
+        }
+    }, 
     async findByClientAndStatus(req,res,next){
         try {
             const id_client= req.params.id_client
             const status = req.params.status
             const data = await Order.findByClientAndStatus(id_client,status);
-            console.log(`Status client ${JSON.stringify(data)}`)
+           
             return res.status(201).json(data); 
 
 
@@ -95,6 +130,8 @@ module.exports={
         try{
 
             let order = req.body;
+           
+
             order.status = 'DESPACHADO';
              await Order.update(order);
             
@@ -121,7 +158,7 @@ module.exports={
             let order = req.body;
             
             order.status = 'EN CAMINO';
-            console.log(order)
+            
              await Order.update(order);
             
 
@@ -145,8 +182,19 @@ module.exports={
         try{
 
             let order = req.body;
+            console.log(order)
             order.status = 'CANCELADO';
+            for(const product of order.products){
+               
+                var inventario = await Product.getInventory(product.id) 
+                let numero = parseInt(inventario.inventory, 10);
+    
+                await Product.IncrementInventory(numero,product)
+            }
+             
+            
              await Order.update(order);
+            
             
 
             return res.status(201).json({
