@@ -98,7 +98,6 @@ module.exports = {
             const product_name = req.params.product_name
          
             const data = await Restaurant.findRestaurantLike(product_name);
-
             return res.status(201).json(data)
             
         }catch(error){

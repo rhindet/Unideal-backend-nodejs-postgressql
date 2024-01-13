@@ -18,12 +18,17 @@ module.exports={
                 var inv = parseInt(inventario.inventory)
            
                 if(inv < product.quantity){
-                    throw new Error("Inventario insuficiente"); 
+                    return res.status(501).json({
+                        success:false,
+                        message:'productos no disponibles'
+                        
+                  })  
                 }
 
             }
 
             order.status = 'EN ESPERA';
+            console.log(order);
             const data = await Order.create(order);
 
 
@@ -95,7 +100,7 @@ module.exports={
             const id = req.params.id_restaurant
             const status = req.params.status
             const data = await Order.getByStatusAndRestaurant(id,status);
-        
+           
             return res.status(201).json(data); 
 
 

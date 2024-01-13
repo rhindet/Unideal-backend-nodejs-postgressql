@@ -65,14 +65,24 @@ Product.IncrementInventory = (numero, order) => {
 Product.inventoryReduce = (inv,product_id,product_quantity) => {
       
         
-        console.log(product_id)
-        console.log(product_quantity)
 
         let nuevoInventario = inv - product_quantity
 
         // Verificar si el inventario es menor que 0
         if (nuevoInventario < 0) {
             throw new Error('No hay suficiente inventario para este producto');
+        }
+
+        if(nuevoInventario === 0){
+            console.log('dadadas')
+                const sql = ` 
+                UPDATE products
+                SET  is_available = false
+                WHERE id = $1
+                `;
+                db.none(sql,[
+                    product_id, 
+                ]);
         }
 
         
@@ -91,6 +101,8 @@ Product.inventoryReduce = (inv,product_id,product_quantity) => {
             new Date()
         ]);
 }
+
+
 
 
 Product.findByCategoryAndProductName = (id_category,product_name) =>{
@@ -125,6 +137,7 @@ Product.create = (producto) => {
         name,
         description,
         price,
+        discount,
         inventory,
         image1,
         image2,
@@ -136,12 +149,13 @@ Product.create = (producto) => {
         updated_at
         
     )
-    VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING id
+    VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id
     `;
     return db.oneOrNone(sql,[
         producto.name,
         producto.description,
         producto.price,
+        producto.discount,
         producto.inventory,
         producto.image1,
         producto.image2,
@@ -228,10 +242,11 @@ Product.update2 = (producto) => {
             name = $2,
             description = $3,
             price = $4,
-            inventory = $5,
-            is_available = $6 ,
-            id_category = $7,
-            updated_at=$8
+            discount = $5,
+            inventory = $6,
+            is_available = $7 ,
+            id_category = $8,
+            updated_at=$9
         
         WHERE 
         id = $1
@@ -242,6 +257,7 @@ Product.update2 = (producto) => {
         producto.name,
         producto.description,
         producto.price,
+        producto.discount,
         producto.inventory,
         producto.is_available,
         producto.id_category,

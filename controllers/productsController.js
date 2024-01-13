@@ -116,14 +116,14 @@ async create(req,res,next){
                     inserts = inserts + 1;
             
                     if (inserts === files.length) {
-                        return res.status(201).json({"success": true, "message": "Se editó correctamente"});
+                        return res.status(201).json({"success": true, "message": "Se creó correctamente"});
                     }
                 });
             };
             if (files !== null && files.length !== 0  ) {
                 start()
             }else{
-                return res.status(201).json({"success": true, "message": "Se editó correctamente"});
+                return res.status(201).json({"success": true, "message": "Se creó correctamente"});
             }
 
 
@@ -131,7 +131,7 @@ async create(req,res,next){
         }catch(error){
             console.log(`El error:${error}`);
             return res.status(501).json({
-                message:`Hubo un error al registrar el producto:${error} `,
+                message:`Hubo un error al crear el producto:${error} `,
                 success:false,
                 error:error
             });

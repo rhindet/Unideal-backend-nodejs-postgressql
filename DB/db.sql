@@ -21,6 +21,7 @@ CREATE TABLE users(
 	password VARCHAR(255) NOT NULL ,
 	is_avaliable BOOLEAN NULL,
 	session_token VARCHAR(255) NULL,
+	recovery_token VARCHAR(255) NULL,
 	created_at TIMESTAMP(0) NOT NULL,
 	updated_at TIMESTAMP(0) NOT NULL
 	
@@ -100,6 +101,7 @@ CREATE TABLE products (
 	name VARCHAR(180) NOT NULL UNIQUE,
 	description VARCHAR(255) NOT NULL ,
 	price DECIMAL DEFAULT 0,
+	discount DECIMAL DEFAULT 0,
 	image1 VARCHAR(255)  NULL,
 	image2 VARCHAR(255) NULL,
 	image3 VARCHAR(255) NULL,

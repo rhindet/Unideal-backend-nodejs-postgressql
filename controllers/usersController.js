@@ -26,6 +26,45 @@ module.exports = {
         }
 
     },
+
+    async deleteRecoveryToken(req,res,next){
+        try{
+            const token = req.params.token
+            const decoded = jwt.decode(token);
+            const currentTime = Math.floor(Date.now() / 1000);
+
+            if (decoded.exp < currentTime) {
+                // El token ha expirado
+                return res.status(501).json(
+                    {
+                        success:false,
+                        message:'Token ha expirado'
+                    }
+                );
+              } else {
+                await User.deleteRecoveryToken(token);
+         
+                return res.status(201).json(
+                    {
+                        success:true,
+                        message:'Se actualizo correctamente'
+                    }
+                );
+              }
+
+            
+        }
+        catch(error){
+            console.log(`Error: ${error}`);
+            return res.status(501).json(
+                {
+                    success:false,
+                    message:'Token no valido'
+                }
+            );
+        }
+
+    },
     async sendForm(req,res,next){
         try{
             const userId = req.params.id_user
@@ -116,19 +155,19 @@ module.exports = {
         try {
              const user = JSON.parse(req.body.user);
            
-             console.log(`Datos enviados del usuario: ${user}`)
             
-
+             const data = await User.create(user);
+            
              const files =  req.files;
-             if(files.length > 0){
-                const pathImage = `image_${Date.now()}`
+             if(files.length > 0){ 
+                const pathImage = `image_profile_${data.id}`
                 const url = await storage(files[0],pathImage);
                 if(url != undefined && url != null){
                     user.image = url
                 }
              }
-
-             const data = await User.create(user);
+ 
+             
             
              await Rol.create(data.id,1); //ROL POR DEFECTO (CLIENTE)
              
@@ -141,6 +180,49 @@ module.exports = {
 
             
         } catch (error) {
+            console.log(error.constraint);
+            if(error.constraint === 'users_email_key'){
+                return res.status(501).json({
+                    success:false,
+                    message:'Email ya existe',
+                    error:error.constraint
+                })
+            }
+            if(error.constraint==='users_phone_key' ){
+                return res.status(501).json({
+                    success:false,
+                    message:'El telefono ya existe',
+                    error:error.constraint
+                })
+            }
+            
+            else{
+                return res.status(501).json({
+                    success:false,
+                    message:'Hubo un error con el registro del usuario',
+                   
+                })
+            }
+           
+        }
+    },
+
+    async updatePassword(req,res,next){
+        try {
+
+            const email = req.body.email;
+            const password = req.body.password
+                console.log(email)
+                console.log(password)
+             await User.RecoveryPassword(email,password);
+            
+             return res.status(201).json({
+                success:true,
+                message:'Se cambio correctamente la contraseña',
+             })
+            
+            
+        } catch (error) {
             console.log(`Error: ${error}`);
             return res.status(501).json({
                 success:false,
@@ -149,16 +231,15 @@ module.exports = {
             })
         }
     },
+
     async update(req,res,next){
         try {
              const user = JSON.parse(req.body.user);
-           
-             console.log(`Datos enviados del usuario: ${user}`)
 
              const files =  req.files;
 
              if(files.length > 0){
-                const pathImage = `image_${Date.now()}`
+                const pathImage = `image_profile_${user.id}`
                 const url = await storage(files[0],pathImage);
                 if(url != undefined && url != null){
                     user.image = url
@@ -191,18 +272,31 @@ module.exports = {
                 const email = req.body.email;
                 const password = req.body.password;
                 const myUser = await User.findByEmail(email);
-
+                    
                 if(!myUser){
                     return res.status(401).json({
                         success:false,
-                        message:'El email no fue encontrado'
+                        message:'Email y/o contraseña incorrecta'
                     })   
+                
                 }
+
+                if(myUser.session_token !== null){
+                    return res.status(401).json({
+                        success:false,
+                        message:'Ya hay una sesion iniciada'
+                    })  
+                }
+
                 if(User.isPasswordMatched(password,myUser.password)){
                     const token = jwt.sign({id:myUser.id,email:myUser.email},keys.secretOrKey,{
-                         //expiresIn:(60*60*24) //1 hora expira
+                         expiresIn:(3600) //1 hora expira
                         
                     });
+                
+               
+                
+                
                     const data = {
                             id:myUser.id,
                             name:myUser.name,
@@ -226,7 +320,7 @@ module.exports = {
                 else{
                     return res.status(401).json({
                             success:false,
-                            message:'La contraseña es incorrecta',
+                            message:'Email y/o contraseña incorrecta',
                     
                     })
                  }
@@ -234,7 +328,7 @@ module.exports = {
         catch(error){
             console.log(`Error: ${error}`);
             return res.status(501).json({
-                succes:false,
+                success:false,
                 message:'Error al momento de hacer login',
                 error:error
             });
@@ -251,8 +345,70 @@ module.exports = {
         }catch(error){
             console.log(`Error: ${error}`);
             return res.status(501).json({
-                succes:false,
+                success:false,
                 message:'Error al momento de cerrar sesion',
+                error:error
+            });
+        }
+    },
+    async RecoveryfindEmail(req,res,next){
+        try{
+            const email = req.params.email;
+            const myUser = await User.findEmailToRecovery(email);
+
+            if(!myUser.exists){
+                return res.status(501).json({
+                    success:false,
+                    message:'Email no encontrado',
+                    
+             });
+            }
+
+            const token = jwt.sign({emails:email},keys.secretOrKey,{
+                expiresIn: 900  //1 hora expira
+               
+           });
+
+            await User.updateRecoveryToken(email,token);
+           
+            await User.sendEmail(email,token);
+
+            return res.status(201).json({
+                success:true,
+                data:myUser.exists,
+                message:'Email encontrado'
+        })
+        }catch(error){
+            console.log(`Error: ${error}`);
+            return res.status(501).json({
+                success:false,
+                message:'El usaurio no existe',
+                error:error
+            });
+        }
+    },
+    async verifyRecoveryToken(req,res,next){
+        try{
+            const email = req.params.email;
+            const verified = await User.verifyRecoveryToken(email)
+
+            if(verified.recovery_token !== null){
+                return res.status(501).json({
+                    success:false,
+                    message:'Email aún no verificado'
+                })
+            }   
+
+            return res.status(201).json({
+                success:true,
+                data:verified.recovery_token,
+                message:'Se verifico correctamente'
+        })
+        }catch(error){
+            console.log(`Error: ${error}`);
+            return res.status(501).json({
+                success:false,
+                message:'Hubo un error en el serivdor',
                 error:error
             });
         }

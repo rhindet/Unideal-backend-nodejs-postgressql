@@ -1,6 +1,7 @@
 
 const crypto = require('crypto')
 const db = require('../config/config');
+const nodemailer = require("nodemailer");
 
 const User = {};
 
@@ -23,6 +24,43 @@ User.sendForm = (userId,formulario) => {
         formulario.descripcion,
         new Date(),
     ]);
+}
+
+
+User.sendEmail = async (email,token)  => {
+    /*var transport = nodemailer.createTransport({
+        host: "sandbox.smtp.mailtrap.io",
+        port: 2525,
+        auth: {
+          user: "10ed7990295fdc",
+          pass: "d8f4fa6db18464"
+        }
+      });*/
+
+      var transport = nodemailer.createTransport({
+        service:"gmail",
+        host: "smtp.gmail.com",
+        port: 587,
+        secure:false,
+        auth: {
+          user: "luisrcparra@gmail.com",
+          pass: "vcwndtzlftmwcdxp"
+        }
+      });
+
+      const info = await transport.sendMail({
+        from : "Arrap - Unideal",
+        to:email,
+        subject:'Verifica tu cuenta de Unideal',
+        text:'Verifica tu cuenta de Unideal',
+        html: `
+                <p>Hola:${email} , Verifica tu cuenta de Unideal</p> 
+                <p>Solo debes dar click al siguiente enlace: 
+                <a href="http://localhost:3000/api/users/deleteToken/${token}">Comprobar Cuenta</a></p>
+                <p>Si tu no creaste esta cuenta, puedes ignorar este mensaje</p>
+                
+`
+      })
 }
 
 
@@ -81,6 +119,19 @@ User.findByEmail = (email) => {
                     U.id`;
     return db.oneOrNone(sql,email);
 }
+
+
+User.findEmailToRecovery = (email) => {
+    const sql = `
+            SELECT EXISTS (SELECT 1 FROM users WHERE email = $1);
+
+            `;
+    return db.oneOrNone(sql,email);
+}
+
+
+
+
 
 User.findByUserId = (id) => {
     const sql = `SELECT
@@ -142,6 +193,24 @@ User.create = (user) =>{
         
 }
 
+User.RecoveryPassword = (email,password) =>{
+
+    const PasswordHashed = crypto.createHash('md5').update(password).digest('hex');
+    console.log(PasswordHashed)
+    console.log(email)
+    console.log(password)
+    const sql = `UPDATE users SET password = $2 
+                WHERE email = $1`;
+
+    return db.none(sql,[
+        email,
+        PasswordHashed
+ 
+    ])
+        
+}
+
+
 
 User.update = (user) =>{
     const sql = `
@@ -151,7 +220,7 @@ User.update = (user) =>{
             name = $2,
             lastname = $3,
             phone = $4,
-            image = $5,
+            image = COALESCE($5, image),
             updated_at = $6,
             email = $7
         WHERE 
@@ -184,6 +253,49 @@ User.updateToken = (id,token) =>{
   
     return db.none(sql,[
        id,
+       token
+    ]);
+   
+}
+
+User.verifyRecoveryToken = (email) =>{
+    const sql = `
+        SELECT recovery_token from users where email = $1
+    `;
+  
+    return db.oneOrNone(sql,[
+       email
+    ]);
+   
+}
+
+User.deleteRecoveryToken = (token) =>{
+    const sql = `
+        UPDATE users SET recovery_token = NULL WHERE recovery_token = $1
+    `;
+  
+    return db.none(sql,[
+        token
+    ]);
+   
+}
+
+
+
+
+User.updateRecoveryToken = (email,token) =>{
+    const sql = `
+        UPDATE
+            users
+        SET
+            recovery_token = $2
+           
+        WHERE 
+            email = $1 
+    `;
+  
+    return db.none(sql,[
+       email,
        token
     ]);
    
