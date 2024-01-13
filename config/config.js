@@ -15,21 +15,21 @@ types.setTypeParser(1114,function(stringValue){
 
 
 
-// const databaseConfig = {
-//     'host' : 'dpg-ckgf3rmafg7c73c92ml0-a',
-//     'port':'5432',
-//     'database':'delivery_db_nf7g',
-//     'user':'rhindet',
-//     'password':'6vBCUeiW8Ng18jTow7mEh23wj2jn6Vgh'
-// };
+ const databaseConfig = {
+    'host' : 'dpg-cmh0bcnqd2ns73fn68o0-a',
+    'port':'5432',
+     'database':'db_unideal',
+    'user':'rhindet',
+    'password':'dHIxmlze2DFmPhsEikVBuSF2qdvTWSRB'
+ };
 
-const databaseConfig = {
-     'host' : 'localhost',
-     'port':'5432',
-    'database':'delivery_db',
-     'user':'postgres',
-    'password':'1824100bh'
-     };
+//const databaseConfig = {
+   //  'host' : 'localhost',
+    // 'port':'5432',
+   // 'database':'delivery_db',
+   //  'user':'postgres',
+    //'password':'1824100bh'
+   //  };
 
 
 const db = pgp(databaseConfig);
