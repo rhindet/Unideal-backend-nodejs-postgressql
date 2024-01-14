@@ -156,7 +156,7 @@ module.exports = {
              const user = JSON.parse(req.body.user);
            
             
-             const data = await User.create(user);
+          
             
              const files =  req.files;
              if(files.length > 0){ 
@@ -168,7 +168,7 @@ module.exports = {
              }
  
              
-            
+             const data = await User.create(user);
              await Rol.create(data.id,1); //ROL POR DEFECTO (CLIENTE)
              
              return res.status(201).json({
