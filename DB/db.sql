@@ -1,15 +1,3 @@
-
-
-DROP TABLE IF EXISTS roles CASCADE;
-CREATE TABLE roles(
-	id BIGSERIAL PRIMARY KEY,
-	name VARCHAR(180) NOT NULL UNIQUE,
-	image VARCHAR(255) NULL,
-	route VARCHAR(255) NULL,
-	created_at TIMESTAMP(0) NOT NULL,
-	updated_at TIMESTAMP(0) NOT NULL
-);
-
 DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE users(
 	id BIGSERIAL PRIMARY KEY,
@@ -27,6 +15,37 @@ CREATE TABLE users(
 	
 
 ); 
+
+DROP TABLE IF EXISTS roles CASCADE;
+CREATE TABLE roles(
+	id BIGSERIAL PRIMARY KEY,
+	name VARCHAR(180) NOT NULL UNIQUE,
+	image VARCHAR(255) NULL,
+	route VARCHAR(255) NULL,
+	created_at TIMESTAMP(0) NOT NULL,
+	updated_at TIMESTAMP(0) NOT NULL
+);
+
+DROP TABLE IF EXISTS restaurants CASCADE;
+CREATE TABLE restaurants(
+		restaurant_id BIGINT NOT NULL,
+		user_id BIGINT NOT NULL,
+		name VARCHAR(90) NOT NULL,
+		tarifa DECIMAL DEFAULT 0,
+		banner VARCHAR(255)  NULL,
+		logo  VARCHAR(255)  NULL,
+		rate DECIMAL DEFAULT 0,
+		is_avaliable BOOLEAN DEFAULT false,
+		time_min  BIGINT NULL DEFAULT 0,
+		time_max  BIGINT NULL DEFAULT 0,
+		created_at TIMESTAMP(0) NOT NULL,
+		updated_at TIMESTAMP(0) NOT NULL,
+		PRIMARY KEY(restaurant_id),
+		FOREIGN KEY(user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
+		
+);
+
+
 
 INSERT INTO roles (
 	name,
@@ -82,7 +101,7 @@ CREATE TABLE user_has_roles(
 
 
 
-//TABLA DE CATEGORIAS
+
 DROP TABLE IF EXISTS categories CASCADE;
 CREATE TABLE categories (
 	id BIGSERIAL PRIMARY KEY,
@@ -94,7 +113,7 @@ CREATE TABLE categories (
 
 
 
-//TABLA DE PRODUCTOS 
+
 DROP TABLE IF EXISTS products CASCADE;
 CREATE TABLE products (
 	id BIGSERIAL PRIMARY KEY,
@@ -117,7 +136,7 @@ CREATE TABLE products (
 	FOREIGN KEY(id_restaurant) REFERENCES restaurants(restaurant_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-//TABLA DE Direcciones
+
 DROP TABLE IF EXISTS address CASCADE;
 CREATE TABLE address(
 	id BIGSERIAL PRIMARY KEY,
@@ -131,7 +150,7 @@ CREATE TABLE address(
 	FOREIGN KEY(id_user) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-//TABLA DE Orden
+
 DROP TABLE IF EXISTS orders CASCADE;
 CREATE TABLE orders(
     id BIGSERIAL PRIMARY KEY,
@@ -154,7 +173,6 @@ CREATE TABLE orders(
 );
 
 
-//TABLA DE OrdentieneProductos
 DROP TABLE IF EXISTS order_has_products CASCADE;
 CREATE TABLE order_has_products(
 		id_order BIGINT NOT NULL,
@@ -168,25 +186,8 @@ CREATE TABLE order_has_products(
 );
 
 
-//TABLA DE Restaruantes
-DROP TABLE IF EXISTS restaurants CASCADE;
-CREATE TABLE restaurants(
-		restaurant_id BIGINT NOT NULL,
-		user_id BIGINT NOT NULL,
-		name VARCHAR(90) NOT NULL,
-		tarifa DECIMAL DEFAULT 0,
-		banner VARCHAR(255)  NULL,
-		logo  VARCHAR(255)  NULL,
-		rate DECIMAL DEFAULT 0,
-		is_avaliable BOOLEAN DEFAULT false,
-		time_min  BIGINT NULL DEFAULT 0,
-		time_max  BIGINT NULL DEFAULT 0,
-		created_at TIMESTAMP(0) NOT NULL,
-		updated_at TIMESTAMP(0) NOT NULL,
-		PRIMARY KEY(restaurant_id),
-		FOREIGN KEY(user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
-		
-);
+
+
 
 DROP TABLE IF EXISTS forms CASCADE;
 CREATE TABLE forms(

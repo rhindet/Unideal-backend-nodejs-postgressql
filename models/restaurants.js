@@ -29,6 +29,19 @@ Restaurant.updateRate = (restaurant_id,rate) =>{
     ]);
 }
 
+Restaurant.updateState = (restaurant_id,state) =>{
+    const sql = `  
+    UPDATE restaurants
+        SET 
+        is_available = $2
+    WHERE restaurant_id = $1
+    `;
+    return db.none(sql,[
+        restaurant_id,
+        state
+    ]);
+}
+
 Restaurant.getAll = () =>{
     const sql = `SELECT * FROM restaurants
     ORDER BY rate DESC 

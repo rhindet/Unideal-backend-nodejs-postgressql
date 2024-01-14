@@ -212,11 +212,10 @@ module.exports = {
 
             const email = req.body.email;
             const password = req.body.password
-                console.log(email)
-                console.log(password)
-             await User.RecoveryPassword(email,password);
             
-             return res.status(201).json({
+            await User.RecoveryPassword(email,password);
+            await User.updateTokenByEmail(email,null)
+            return res.status(201).json({
                 success:true,
                 message:'Se cambio correctamente la contraseña',
              })
@@ -271,7 +270,11 @@ module.exports = {
         try{
                 const email = req.body.email;
                 const password = req.body.password;
+
+
                 const myUser = await User.findByEmail(email);
+
+
                     
                 if(!myUser){
                     return res.status(401).json({
@@ -281,21 +284,25 @@ module.exports = {
                 
                 }
 
-                if(myUser.session_token !== null){
+
+            
+                if(myUser.session_token !== null ){
                     return res.status(401).json({
                         success:false,
                         message:'Ya hay una sesion iniciada'
                     })  
                 }
+                
+                
 
                 if(User.isPasswordMatched(password,myUser.password)){
                     const token = jwt.sign({id:myUser.id,email:myUser.email},keys.secretOrKey,{
-                         expiresIn:(3600) //1 hora expira
+                         expiresIn:(120) //1 hora expira
                         
                     });
                 
                
-                
+                 
                 
                     const data = {
                             id:myUser.id,

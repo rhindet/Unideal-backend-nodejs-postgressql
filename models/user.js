@@ -51,12 +51,12 @@ User.sendEmail = async (email,token)  => {
       const info = await transport.sendMail({
         from : "Arrap - Unideal",
         to:email,
-        subject:'Verifica tu cuenta de Unideal',
-        text:'Verifica tu cuenta de Unideal',
+        subject:'Recupera tu cuenta de Unideal',
+        text:'Recupera tu cuenta de Unideal',
         html: `
                 <p>Hola:${email} , Verifica tu cuenta de Unideal</p> 
                 <p>Solo debes dar click al siguiente enlace: 
-                <a href="http://localhost:3000/api/users/deleteToken/${token}">Comprobar Cuenta</a></p>
+                <a href="https://unideal.onrender.com/api/users/deleteToken/${token}">Comprobar Cuenta</a></p>
                 <p>Si tu no creaste esta cuenta, puedes ignorar este mensaje</p>
                 
 `
@@ -196,15 +196,15 @@ User.create = (user) =>{
 User.RecoveryPassword = (email,password) =>{
 
     const PasswordHashed = crypto.createHash('md5').update(password).digest('hex');
-    console.log(PasswordHashed)
-    console.log(email)
-    console.log(password)
-    const sql = `UPDATE users SET password = $2 
+   
+    const sql = `UPDATE users SET password = $2,
+                  recovery_token = $3
                 WHERE email = $1`;
 
     return db.none(sql,[
         email,
-        PasswordHashed
+        PasswordHashed,
+        null
  
     ])
         
@@ -253,6 +253,24 @@ User.updateToken = (id,token) =>{
   
     return db.none(sql,[
        id,
+       token
+    ]);
+   
+}
+
+User.updateTokenByEmail = (email,token) =>{
+    const sql = `
+        UPDATE
+            users
+        SET
+            session_token = $2
+           
+        WHERE 
+             email = $1 
+    `;
+  
+    return db.none(sql,[
+      email,
        token
     ]);
    

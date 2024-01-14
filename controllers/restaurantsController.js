@@ -26,6 +26,35 @@ module.exports = {
 
     },
 
+    async updateState(req,res,next){
+        try{
+
+            const state = req.params.state
+            const restaurant_id = req.params.restaurant_id
+
+            console.log(state)
+            console.log(restaurant_id) 
+            await Restaurant.updateState(restaurant_id,state);
+          
+            return res.status(201).json( 
+               {
+                success:true,
+                message:'Se actualizo con exito el estado'
+               }
+            );
+        }
+        catch(error){
+            console.log(`Error: ${error}`);
+            return res.status(501).json(
+                {
+                    success:false,
+                    message:'Error al obtener los restaurantes'
+                }
+            );
+        }
+
+    },
+
     async getById(req,res,next){
         try{
             const id_restaurant = req.params.id_restaurant
