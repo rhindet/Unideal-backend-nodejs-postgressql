@@ -193,6 +193,8 @@ User.create = (user) =>{
         
 }
 
+
+
 User.RecoveryPassword = (email,password) =>{
 
     const PasswordHashed = crypto.createHash('md5').update(password).digest('hex');

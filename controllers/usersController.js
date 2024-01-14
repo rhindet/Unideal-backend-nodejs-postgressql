@@ -154,20 +154,18 @@ module.exports = {
     async registerWithImage(req,res,next){
         try {
              const user = JSON.parse(req.body.user);
-           
-            
-          
-            
+
+             
+             
              const files =  req.files;
              if(files.length > 0){ 
-                const pathImage = `image_profile_${data.id}`
+                const pathImage =  `image_profile_${user.email}`
                 const url = await storage(files[0],pathImage);
                 if(url != undefined && url != null){
                     user.image = url
                 }
              }
  
-             
              const data = await User.create(user);
              await Rol.create(data.id,1); //ROL POR DEFECTO (CLIENTE)
              
@@ -238,7 +236,7 @@ module.exports = {
              const files =  req.files;
 
              if(files.length > 0){
-                const pathImage = `image_profile_${user.id}`
+                const pathImage = `image_profile_${user.email}`
                 const url = await storage(files[0],pathImage);
                 if(url != undefined && url != null){
                     user.image = url
