@@ -43,11 +43,13 @@ Product.delete= (id_product) =>{
 Product.IncrementInventory = (numero, order) => {
  
     var nuevoInventario = order.quantity + numero
+    
     const sql = ` 
             UPDATE 
                 products
             SET 
                 inventory = $2,
+                is_available = true,
                 updated_at = $3
             WHERE 
                 id = $1
