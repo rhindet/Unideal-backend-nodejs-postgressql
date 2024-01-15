@@ -266,6 +266,8 @@ module.exports = {
 
     async login(req,res,next){
         try{
+
+            console.log('holaaaaaa');
                 const email = req.body.email;
                 const password = req.body.password;
 
