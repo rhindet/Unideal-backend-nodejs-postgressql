@@ -13,10 +13,11 @@ types.setTypeParser(1114,function(stringValue){
 });
 
 
-
+//'host' : 'dpg-cmh0bcnqd2ns73fn68o0-a',
 
  const databaseConfig = {
-    'host' : 'dpg-cmh0bcnqd2ns73fn68o0-a',
+  
+     'host' : 'dpg-cmh0bcnqd2ns73fn68o0-a.oregon-postgres.render.com',
     'port':'5432',
      'database':'db_unideal',
     'user':'rhindet',
