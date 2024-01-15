@@ -32,6 +32,6 @@ types.setTypeParser(1114,function(stringValue){
     //'password':'1824100bh'
      //};
 
-
+const connectionString = 'postgres://rhindet:dHIxmlze2DFmPhsEikVBuSF2qdvTWSRB@dpg-cmh0bcnqd2ns73fn68o0-a.oregon-postgres.render.com/db_unideal'
 const db = pgp(databaseConfig);
 module.exports = db;
