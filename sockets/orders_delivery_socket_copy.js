@@ -53,6 +53,20 @@ module.exports = (io) => {
                     console.log('entro al updatestatus') 
                   });
 
+    
+
+                  socket.on('updateStatus2', (data) => {
+                    console.log(data);
+                    orderDeliveryNameSpace.emit(`updateStatus2/${data.userId}`, { status: data.status });
+            
+                  }); 
+
+                  socket.on('updateStatusToRestaurant', (data) => {
+                    console.log(data)
+                    orderDeliveryNameSpace.emit(`updateStatusToRestaurant/${data.restaurantId}`, { status: data.status });
+            
+                  }); 
+
                    // Manejar eventos personalizados aquí
                 socket.on('rate', (data) => {
                     console.log(`EMITIO a rate${JSON.stringify(data)}`);

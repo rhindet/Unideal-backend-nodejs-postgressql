@@ -33,6 +33,7 @@ CREATE TABLE restaurants(
 		name VARCHAR(90) NOT NULL,
 		tarifa DECIMAL DEFAULT 0,
 		banner VARCHAR(255)  NULL,
+		phone VARCHAR(20)  NULL,
 		logo  VARCHAR(255)  NULL,
 		rate DECIMAL DEFAULT 0,
 		is_avaliable BOOLEAN DEFAULT false,

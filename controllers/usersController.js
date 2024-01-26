@@ -245,22 +245,42 @@ module.exports = {
 
              await User.update(user);
 
-            
+             
+
 
              return res.status(201).json({
                 success:true,
                 message:'Los datos del usuario se actualizarion correctamente',
                
              })
+
+             
             
             
         } catch (error) {
-            console.log(`Error: ${error}`);
-            return res.status(501).json({
-                success:false,
-                message:'Hubo un error con la actualziacion de datos del usuario',
-                error:error
-            })
+
+            if(error.constraint === 'users_email_key'){
+                return res.status(501).json({
+                    success:false,
+                    message:'El email ya existe',
+                   
+                 })
+            } else if(error.constraint === 'users_phone_key'){
+                return res.status(501).json({
+                    success:false,
+                    message:'El telefono ya existe',
+                    
+                 })
+            }else{
+                return res.status(501).json({ 
+                    success:false,
+                    message:'Hubo un error con la actualziacion de datos del usuario',
+                    error:error
+                })
+            }
+            
+            
+           
         }
     },
 

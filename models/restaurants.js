@@ -83,6 +83,7 @@ Restaurant.findRestaurantLike = (product_name) =>{
             R.time_max,
             R.banner,
             R.rate,
+            R.phone,
             R.tarifa,
             R.created_at,
             R.updated_at,
