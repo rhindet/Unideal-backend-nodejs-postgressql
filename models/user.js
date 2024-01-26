@@ -54,9 +54,9 @@ User.sendEmail = async (email,token)  => {
         subject:'Recupera tu cuenta de Unideal',
         text:'Recupera tu cuenta de Unideal',
         html: `
-                <p>Hola:${email} , Verifica tu cuenta de Unideal</p> 
+                <p>Hola: ${email} , Verifica tu cuenta de Unideal</p> 
                 <p>Solo debes dar click al siguiente enlace: 
-                <a href="https://unideal.onrender.com/api/users/deleteToken/${token}">Comprobar Cuenta</a></p>
+                <a href="http://64.227.106.189:3000/api/users/deleteToken/${token}">Recuperar Cuenta</a></p>
                 <p>Si tu no creaste esta cuenta, puedes ignorar este mensaje</p>
                 
 `
