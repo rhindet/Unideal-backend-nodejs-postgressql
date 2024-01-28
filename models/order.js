@@ -79,7 +79,8 @@ Order.findByStatus = (status) =>{
                 status = $1
             GROUP BY
                 O.id,U.id,A.id,U2.id
-            ORDER BY O.timestamp DESC;               
+            ORDER BY O.timestamp DESC;   
+            LIMIT 50;           
     
 `;
 
@@ -164,7 +165,8 @@ Order.findByDeliveryAndStatus = (id_delivery,status) =>{
             O.id_delivery = $1  AND status = $2  
             GROUP BY
                 O.id,U.id,A.id,U2.id
-            ORDER BY O.timestamp DESC;       
+            ORDER BY O.timestamp DESC
+            LIMIT 50;       
     
 `;
   
@@ -236,7 +238,8 @@ WHERE
     O.id_restaurant = $1 AND O.status = $2
 GROUP BY
     O.id, U.id, A.id, U2.id
-    ORDER BY O.timestamp DESC;
+    ORDER BY O.timestamp DESC
+    LIMIT 50;   
 `;
   
     return db.manyOrNone(sql,[id,status]);
@@ -303,7 +306,8 @@ Order.findByClientAndStatus = (id_client,status) =>{
         O.id_client = $1 AND status = $2
     GROUP BY
         O.id, U.id, A.id, U2.id
-    ORDER BY O.timestamp DESC;
+    ORDER BY O.timestamp DESC
+    LIMIT 50;   
 `;
  
 
